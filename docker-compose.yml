@@ -1,0 +1,35 @@
+version: "3"
+services:
+  backend:
+    build:
+      context: ./django_project
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 8001:8001
+    volumes:
+      - ./django_project:/app
+      - ./django_project/media:/app/media
+      - ./django_project/static:/app/static
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - 8000:80
+    volumes:
+      - ./django_project/media:/app/media
+      - ./django_project/static:/app/static
+
+  postgres:
+    image: postgres:11.3
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    driver: local
